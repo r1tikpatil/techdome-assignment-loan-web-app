@@ -21,6 +21,14 @@ const calculatePayments = (loan, payments) => {
 exports.createLoan = async (req, res) => {
   try {
     const { userId, amount, term, payments } = req.body;
+    const user = req.user;
+
+    if (user.isAdmin) {
+      return res.status(401).json({
+        success: false,
+        message: "Only user can create loans!",
+      });
+    }
 
     const loan = await Loan.create({ userId, amount, term });
 

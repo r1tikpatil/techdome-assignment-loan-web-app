@@ -41,11 +41,12 @@ exports.login = async (req, res) => {
 
     if (!email || !password) {
       return res.status(400).json({
+        success: false,
         message: "Enter email and password",
       });
     }
 
-    const user = await User.findOne({ email: email, isAdmin: isAdmin });
+    const user = await User.findOne({ email, isAdmin });
 
     if (!user) {
       return res.status(400).json({
