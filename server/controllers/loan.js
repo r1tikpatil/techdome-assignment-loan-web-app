@@ -33,7 +33,6 @@ exports.createLoan = async (req, res) => {
       message: "Successfully created loan!",
     });
   } catch (error) {
-    console.error(error);
     return res.status(500).json({
       success: false,
       message: "Internal server error",
@@ -48,15 +47,147 @@ exports.getAllLoans = async (req, res) => {
       select: "name email isAdmin",
     });
 
-    return res.status(200).send({
+    return res.status(200).json({
       success: true,
       loans,
     });
   } catch (error) {
-    console.log(error);
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       error: error.message,
+    });
+  }
+};
+
+exports.getLoansById = async (req, res) => {
+  try {
+    const userId = req.params.id;
+
+    const loans = await Loan.find({ userId });
+
+    return res.status(200).json({
+      success: true,
+      loans,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      error: error.message,
+    });
+  }
+};
+
+exports.getPaymentsById = async (req, res) => {
+  try {
+    const loanId = req.params.id;
+
+    const payments = await Payment.find({ loanId });
+
+    return res.status(200).json({
+      success: true,
+      payments,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      error: error.message,
+    });
+  }
+};
+
+exports.doPayment = async (req, res) => {
+  try {
+    const { loanId, amount } = req.body;
+
+    const loan = await Loan.findById(loanId);
+
+    if (!loan || loan.state === "PAID") {
+      return res.status(404).json({
+        success: false,
+        message: "Loan not found or already paid.",
+      });
+    }
+
+    const pendingPayments = await Payment.find({
+      loanId,
+      status: "PENDING",
+    }).sort("dueDate");
+
+    if (pendingPayments.length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: "No pending payments found.",
+      });
+    }
+
+    let remainingAmount = amount;
+
+    for (const repayment of pendingPayments) {
+      if (remainingAmount <= 0) break;
+
+      const paidAmount = Math.min(repayment.amount, remainingAmount);
+      remainingAmount -= paidAmount;
+
+      repayment.amount -= paidAmount;
+      if (repayment.amount === 0) {
+        repayment.status = "PAID";
+      }
+
+      await repayment.save();
+    }
+
+    const allPaymentsPaid = pendingPayments.every(
+      (repayment) => repayment.status === "PAID"
+    );
+
+    if (allPaymentsPaid) {
+      loan.state = "PAID";
+      await loan.save();
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Repayment successful.",
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+exports.updateState = async (req, res) => {
+  try {
+    const { loanId, state } = req.body;
+
+    const loan = await Loan.findOne({ _id: loanId });
+
+    if (!loan) {
+      return res.status(404).json({
+        success: false,
+        message: "Loan request not found!",
+      });
+    }
+
+    if (loan.state !== "PENDING") {
+      return res.status(400).json({
+        success: false,
+        message: "Request has already been processed!",
+      });
+    }
+
+    loan.state = state;
+    await loan.save();
+
+    return res.status(200).json({
+      success: true,
+      message: "Loan state updated successfully!",
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message,
     });
   }
 };
