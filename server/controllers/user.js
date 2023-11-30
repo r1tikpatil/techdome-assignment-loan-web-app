@@ -16,19 +16,16 @@ exports.register = async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(password, 12);
 
-    const newUser = new User.create({
+    await User.create({
       email,
-      isAdmin,
-      password: hashedPassword,
       name,
+      password: hashedPassword,
+      isAdmin,
     });
-
-    await newUser.save();
 
     return res.status(201).json({
       success: true,
       message: "Signup successful",
-      user: newUser,
     });
   } catch (err) {
     return res.status(500).json({
@@ -44,7 +41,7 @@ exports.login = async (req, res) => {
 
     if (!email || !password) {
       return res.status(400).json({
-        error: "Invalid email or password",
+        message: "Enter email and password",
       });
     }
 
@@ -52,7 +49,8 @@ exports.login = async (req, res) => {
 
     if (!user) {
       return res.status(400).json({
-        error: "Invalid email or password",
+        success: false,
+        message: "Invalid email or password",
       });
     }
 
