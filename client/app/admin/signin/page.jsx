@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect, useContext } from "react";
-import AuthContext from "@/actions/authContext";
+import AuthContext from "@/actions/context";
 import { useRouter } from "next/navigation";
 import SignInPage from "../../../components/Signin";
 import Loader from "@/components/Loader";

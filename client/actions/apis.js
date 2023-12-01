@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import AuthContext from "./authContext";
+import AuthContext from "./context";
 
 const AuthState = ({ children }) => {
   const [user, setUser] = useState(null);

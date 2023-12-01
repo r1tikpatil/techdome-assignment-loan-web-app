@@ -1,6 +1,6 @@
 "use client";
 import { useState, useContext } from "react";
-import AuthContext from "@/actions/authContext";
+import AuthContext from "@/actions/context";
 import Loader from "@/components/Loader";
 import { useRouter } from "next/navigation";
 

@@ -1,5 +1,5 @@
 import "./globals.css";
-import AuthState from "../actions/apiContext";
+import AuthState from "../actions/apis";
 
 export const metadata = {
   title: "Loan App",

@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useContext } from "react";
-import AuthContext from "@/actions/authContext";
+import AuthContext from "@/actions/context";
 import { useRouter } from "next/navigation";
 import SignUpPage from "@/components/Signup";
 import Loader from "@/components/Loader";

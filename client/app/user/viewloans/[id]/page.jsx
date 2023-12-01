@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect, useContext, useRef } from "react";
-import AuthContext from "@/actions/authContext";
+import AuthContext from "@/actions/context";
 import Link from "next/link";
 
 const Page = ({ params }) => {
