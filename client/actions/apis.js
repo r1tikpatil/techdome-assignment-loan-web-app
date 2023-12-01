@@ -27,11 +27,6 @@ const AuthState = ({ children }) => {
 
     const result = await response.json();
 
-    if (!result.success) {
-      console.log(result.message || "Server error");
-      return;
-    }
-
     return result;
   };
 

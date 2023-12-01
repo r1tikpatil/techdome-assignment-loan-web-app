@@ -1,3 +1,5 @@
+import { Toaster } from "react-hot-toast";
+
 import "./globals.css";
 import AuthState from "../actions/apis";
 
@@ -11,6 +13,7 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body>
         <main>
+          <Toaster position="top-right" />
           <AuthState>{children}</AuthState>
         </main>
       </body>

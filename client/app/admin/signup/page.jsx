@@ -5,6 +5,11 @@ import { useRouter } from "next/navigation";
 import SignUpPage from "@/components/Signup";
 import Loader from "@/components/Loader";
 
+import {
+  successMessageToast,
+  errorMessageToast,
+} from "@/actions/toastMessages";
+
 const SignUp = () => {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
@@ -18,24 +23,31 @@ const SignUp = () => {
 
   const { signUpAdmin } = useContext(AuthContext);
 
-  const [error, setError] = useState("");
-
   const handleSubmit = async (e) => {
-    setLoading(true);
     e.preventDefault();
+
+    if (values.password.length < 8) {
+      errorMessageToast("Password should be of more then 8 characters!");
+      return;
+    }
+
     try {
+      setLoading(true);
       const response = await signUpAdmin(values);
 
       if (response.success) {
+        setLoading(false);
+        successMessageToast(response.message);
         setTimeout(() => {
           setLoading(false);
           router.push("/admin/signin");
         }, 1000);
       } else {
-        setError(response.msg);
+        errorMessageToast(response.message);
+        setLoading(false);
       }
     } catch (err) {
-      console.log("Error:", err);
+      errorMessageToast(err);
     }
   };
 
@@ -44,7 +56,6 @@ const SignUp = () => {
       {loading && <Loader color="rgba(0,0,0,0.6)" />}
       <SignUpPage
         handleSubmit={handleSubmit}
-        error={error}
         values={values}
         setValues={setValues}
         url={"/admin/signin"}

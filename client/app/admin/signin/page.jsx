@@ -5,6 +5,11 @@ import { useRouter } from "next/navigation";
 import SignInPage from "../../../components/Signin";
 import Loader from "@/components/Loader";
 
+import {
+  successMessageToast,
+  errorMessageToast,
+} from "@/actions/toastMessages";
+
 const SignIn = () => {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
@@ -14,29 +19,24 @@ const SignIn = () => {
     password: "",
     isAdmin: true,
   });
-  const [error, setError] = useState("");
-
-  useEffect(() => {
-    if (error) {
-      setError("");
-    }
-  }, [values.password]);
 
   const handleLogin = async () => {
     try {
       setLoading(true);
       const res = await signInAdmin(values);
+
       if (res.success) {
+        successMessageToast(res.message);
         setTimeout(() => {
           setLoading(false);
           router.push("/admin/dashboard");
         }, 1000);
       } else {
-        setError(res.message);
+        errorMessageToast(res.message);
         setLoading(false);
       }
     } catch (err) {
-      console.log(err);
+      errorMessageToast(err);
     }
   };
 
@@ -45,7 +45,6 @@ const SignIn = () => {
       {loading && <Loader color="rgba(0,0,0,0.6)" />}
       <SignInPage
         handleLogin={handleLogin}
-        error={error}
         values={values}
         setValues={setValues}
         url={"/admin/signup"}

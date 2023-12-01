@@ -1,9 +1,14 @@
 "use client";
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useContext } from "react";
 import AuthContext from "@/actions/context";
 import { useRouter } from "next/navigation";
 import SignInPage from "@/components/Signin";
 import Loader from "@/components/Loader";
+
+import {
+  successMessageToast,
+  errorMessageToast,
+} from "@/actions/toastMessages";
 
 const SignIn = () => {
   const router = useRouter();
@@ -14,28 +19,23 @@ const SignIn = () => {
     password: "",
     isAdmin: false,
   });
-  const [error, setError] = useState("");
-
-  useEffect(() => {
-    if (error) {
-      setError("");
-    }
-  }, [values.password]);
 
   const handleLogin = async () => {
     try {
       setLoading(true);
       const res = await signInUser(values);
       if (res.success) {
+        successMessageToast(res.message);
         setTimeout(() => {
           setLoading(false);
           router.push("/user/dashboard");
         }, 1000);
       } else {
-        setError(res.msg);
+        setLoading(false);
+        errorMessageToast(res.message);
       }
     } catch (err) {
-      console.log(err);
+      errorMessageToast(err);
     }
   };
 
@@ -44,7 +44,6 @@ const SignIn = () => {
       {loading && <Loader color="rgba(0,0,0,0.6)" />}
       <SignInPage
         handleLogin={handleLogin}
-        error={error}
         values={values}
         setValues={setValues}
         url={"/user/signup"}
