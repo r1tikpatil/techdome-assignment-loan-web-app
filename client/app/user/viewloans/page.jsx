@@ -13,15 +13,24 @@ const page = () => {
     user = JSON.parse(localStorage.getItem("user"));
   }
 
-  async function getLoans() {
+  const getLoans = async () => {
     const res = await getLoansById(user._id);
-    console.log(res);
     setLoans(res);
-  }
+  };
 
   useEffect(() => {
     getLoans();
   }, []);
+
+  if (loans.length === 0) {
+    return (
+      <div className="text-center">
+        <p className="text-lg text-gray-600 font-semibold mt-8">
+          No loans taken.
+        </p>
+      </div>
+    );
+  }
   return (
     <div className="mt-12  w-screen flex justify-items-center  justify-center">
       <div className="w-full sm:w-4/5 lg:w-1/2 border-2 bg-gray-200 p-4 md:p-8 shadow-lg">
@@ -63,7 +72,7 @@ const page = () => {
                 )}
                 <div className="">
                   {loan.state === "PAID" && (
-                    <p className="text-blue-500 pl-20    text-center">PAID</p>
+                    <p className="text-blue-500 pl-20  text-center">PAID</p>
                   )}
                 </div>
                 {loan.state === "REJECT" && (

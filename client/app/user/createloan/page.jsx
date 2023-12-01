@@ -4,6 +4,11 @@ import AuthContext from "@/actions/context";
 import Loader from "@/components/Loader";
 import { useRouter } from "next/navigation";
 
+import {
+  successMessageToast,
+  errorMessageToast,
+} from "@/actions/toastMessages";
+
 const LoanCalculator = () => {
   const [loanAmount, setLoanAmount] = useState("");
   const [term, setTerm] = useState("");
@@ -22,9 +27,21 @@ const LoanCalculator = () => {
         payments: installments,
         userId: user._id,
       });
-      router.push("/user/dashboard");
-      setLoading(false);
-    } catch {}
+
+      if (response.success) {
+        successMessageToast(response.message);
+        setTimeout(() => {
+          router.push("/user/dashboard");
+          setLoading(false);
+        }, 2000);
+      } else {
+        errorMessageToast(response.message);
+        setLoading(false);
+      }
+    } catch (err) {
+      console.log(err);
+      errorMessageToast(err);
+    }
   };
 
   const calculateInstallments = () => {
@@ -67,7 +84,6 @@ const LoanCalculator = () => {
   return (
     <div className="h-screen ">
       <div className="flex items-center justify-center flex-col lg:flex-row  mt-8  h-3/4 ">
-        {/* <div> */}
         <div className="border p-4  shadow-md items-center flex flex-col mx-8  md:h-full  md:w-2/5 lg:w-1/4 lg:h-4/5 rounded-full m-8 justify-center ">
           <div className="mb-4">
             <label className="block mb-2 text-center">Loan Amount</label>
@@ -94,7 +110,6 @@ const LoanCalculator = () => {
             Schedule
           </button>
         </div>
-        {/* </div> */}
 
         <div className=" p-4 border shadow-lg w-2/3 lg:w-1/3">
           <h2 className="text-2xl mb-4 ">Scheduled Repayments</h2>

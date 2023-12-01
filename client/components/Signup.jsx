@@ -1,7 +1,8 @@
 "use client";
-import React, { useState } from "react";
+import React from "react";
 import Link from "next/link";
-const SignUp = ({ handleSubmit, error, values, url, setValues }) => {
+
+const SignUp = ({ handleSubmit, values, url, setValues }) => {
   return (
     <>
       <div className="flex items-center justify-center min-h-screen">
@@ -60,7 +61,6 @@ const SignUp = ({ handleSubmit, error, values, url, setValues }) => {
                 }
               />
             </div>
-            {error && <p className="text-red-500 mb-4">{error}</p>}
             <div className="flex justify-between">
               <button
                 className="bg-pink-500 hover:bg-pink-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"

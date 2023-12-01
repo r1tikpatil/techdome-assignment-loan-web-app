@@ -57,12 +57,13 @@ exports.getAllLoans = async (req, res) => {
 
     return res.status(200).json({
       success: true,
+      message: "success!",
       loans,
     });
   } catch (error) {
     return res.status(500).json({
       success: false,
-      error: error.message,
+      message: error.message,
     });
   }
 };
@@ -75,12 +76,13 @@ exports.getLoansById = async (req, res) => {
 
     return res.status(200).json({
       success: true,
+      message: "success!",
       loans,
     });
   } catch (error) {
     return res.status(500).json({
       success: false,
-      error: error.message,
+      message: error.message,
     });
   }
 };
@@ -93,12 +95,13 @@ exports.getPaymentsById = async (req, res) => {
 
     return res.status(200).json({
       success: true,
+      message: "success!",
       payments,
     });
   } catch (error) {
     return res.status(500).json({
       success: false,
-      error: error.message,
+      message: error.message,
     });
   }
 };

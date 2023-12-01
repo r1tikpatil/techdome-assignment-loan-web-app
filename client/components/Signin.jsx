@@ -2,7 +2,7 @@
 import React from "react";
 import Link from "next/link";
 
-const SignIn = ({ values, setValues, handleLogin, url, error }) => {
+const SignIn = ({ values, setValues, handleLogin, url }) => {
   return (
     <div className="flex items-center justify-center min-h-screen">
       <div className="bg-white shadow-lg rounded-lg p-8 w-full sm:w-96">
@@ -42,7 +42,6 @@ const SignIn = ({ values, setValues, handleLogin, url, error }) => {
               }
             />
           </div>
-          {error && <p className="text-red-500 mb-4">{error}</p>}
           <div className="flex flex-col sm:flex-row sm:justify-between">
             <button
               onClick={handleLogin}

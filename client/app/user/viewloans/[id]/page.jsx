@@ -2,6 +2,41 @@
 import React, { useState, useEffect, useContext, useRef } from "react";
 import AuthContext from "@/actions/context";
 import Link from "next/link";
+import {
+  successMessageToast,
+  errorMessageToast,
+} from "@/actions/toastMessages";
+
+const formateDate = (dateString) => {
+  const date = new Date(dateString);
+  const dd = String(date.getDate()).padStart(2, "0");
+  const mm = String(date.getMonth() + 1).padStart(2, "0");
+  const yy = String(date.getFullYear()).slice(-2);
+  return `${dd}/${mm}/${yy}`;
+};
+
+const RepaymentRow = ({ repayment }) => (
+  <tr>
+    <td className="border px-4 py-2 text-center">{repayment.totalAmount}</td>
+    <td className="border px-4 py-2 text-center">{repayment.amount}</td>
+    <td className="border px-4 py-2 text-center">
+      {formateDate(repayment.date)}
+    </td>
+    <td
+      className={`border px-4 py-2 text-center ${
+        repayment.status === "PENDING" ? "text-red-500" : "text-green-500"
+      }`}
+    >
+      {repayment.status}
+    </td>
+  </tr>
+);
+
+const modalStyles = {
+  bg: "absolute inset-0 bg-black opacity-50",
+  content:
+    "relative flex flex-col justify-center items-center bg-white p-4 shadow-lg h-80 w-80 rounded-full",
+};
 
 const Page = ({ params }) => {
   const [repayments, setRepayments] = useState([]);
@@ -10,12 +45,17 @@ const Page = ({ params }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [paymentAmount, setPaymentAmount] = useState("");
   const [remainingBalance, setRemainingBalance] = useState(0);
-  const modalRef = useRef(null); /*  jjjjjjj */
+  const modalRef = useRef(null);
 
   async function fetchRepayments() {
-    const res = await getPaymentsById(params.id);
-    setRepayments(res);
+    try {
+      const res = await getPaymentsById(params.id);
+      setRepayments(res);
+    } catch (error) {
+      console.error("Error fetching repayments:", error);
+    }
   }
+
   useEffect(() => {
     fetchRepayments();
   }, [params.id]);
@@ -23,20 +63,6 @@ const Page = ({ params }) => {
   const hasPendingRepayments = repayments.some(
     (repayment) => repayment.status === "PENDING"
   );
-
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    const dd = String(date.getDate()).padStart(2, "0");
-    const mm = String(date.getMonth() + 1).padStart(2, "0");
-    const yy = String(date.getFullYear()).slice(-2);
-    return `${dd}/${mm}/${yy}`;
-  };
-
-  const openModal = () => {
-    if (hasPendingRepayments) {
-      setIsModalOpen(true);
-    }
-  };
 
   useEffect(() => {
     const pendingRepaymentAmounts = repayments
@@ -50,6 +76,12 @@ const Page = ({ params }) => {
     setRemainingBalance(balance);
   }, [repayments]);
 
+  const openModal = () => {
+    if (hasPendingRepayments) {
+      setIsModalOpen(true);
+    }
+  };
+
   const closeModal = () => {
     setIsModalOpen(false);
     setPaymentAmount("");
@@ -61,14 +93,23 @@ const Page = ({ params }) => {
     );
 
     if (isValidAmount) {
-      const res = await doPayment({
-        amount: paymentAmount,
-        loanId: params.id,
-      });
-      fetchRepayments();
-      closeModal();
+      try {
+        const res = await doPayment({
+          amount: paymentAmount,
+          loanId: params.id,
+        });
+        if (res.success) {
+          successMessageToast(res.message);
+        } else {
+          errorMessageToast(res.message);
+        }
+        fetchRepayments();
+        closeModal();
+      } catch (error) {
+        console.error("Error submitting payment:", error);
+      }
     } else {
-      console.log("Invalid payment amount.");
+      errorMessageToast("Invalid payment amount.");
     }
   };
 
@@ -81,7 +122,7 @@ const Page = ({ params }) => {
         LOAN-APP
       </Link>
       <h1 className="text-center font-bold text-xl">Balance Sheet</h1>
-      <div className="w-full  flex justify-center ">
+      <div className="w-full flex justify-center">
         <table className="mt-4 w-2/3 border-collapse border-2 shadow bg-gray-100 p-16">
           <thead>
             <tr>
@@ -93,26 +134,7 @@ const Page = ({ params }) => {
           </thead>
           <tbody>
             {repayments.map((repayment, index) => (
-              <tr key={index}>
-                <td className="border px-4 py-2 text-center">
-                  {repayment.totalAmount}
-                </td>
-                <td className="border px-4 py-2 text-center">
-                  {repayment.amount}
-                </td>
-                <td className="border px-4 py-2 text-center">
-                  {formatDate(repayment.date)}
-                </td>
-                <td
-                  className={`border px-4 py-2 text-center ${
-                    repayment.status === "PENDING"
-                      ? "text-red-500"
-                      : "text-green-500"
-                  }`}
-                >
-                  {repayment.status}
-                </td>
-              </tr>
+              <RepaymentRow key={index} repayment={repayment} />
             ))}
           </tbody>
         </table>
@@ -133,12 +155,9 @@ const Page = ({ params }) => {
 
       {isModalOpen && (
         <div className="fixed inset-0 flex items-center justify-center z-50 ">
-          <div className="modal-bg absolute inset-0 bg-black opacity-50"></div>
+          <div className={modalStyles.bg}></div>
 
-          <div
-            className="modal relative flex  flex-col justify-center items-center bg-white p-4  shadow-lg h-80 w-80 rounded-full"
-            ref={modalRef}
-          >
+          <div className={modalStyles.content} ref={modalRef}>
             <h2 className="text-lg font-bold mb-4 text-center">
               Make Repayment
             </h2>
