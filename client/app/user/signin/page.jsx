@@ -1,6 +1,5 @@
 "use client";
 import React, { useState, useEffect, useContext } from "react";
-import Link from "next/link";
 import AuthContext from "@/actions/authContext";
 import { useRouter } from "next/navigation";
 import SignInPage from "@/components/Signin";
@@ -9,7 +8,7 @@ import Loader from "@/components/Loader";
 const SignIn = () => {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
-  const { loginUser } = useContext(AuthContext);
+  const { signInUser } = useContext(AuthContext);
   const [values, setValues] = useState({
     email: "",
     password: "",
@@ -26,8 +25,8 @@ const SignIn = () => {
   const handleLogin = async () => {
     try {
       setLoading(true);
-      const res = await loginUser(values);
-      if (res.message === "success") {
+      const res = await signInUser(values);
+      if (res.success) {
         setTimeout(() => {
           setLoading(false);
           router.push("/user/dashboard");

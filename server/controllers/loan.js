@@ -3,19 +3,19 @@ const Payment = require("../models/payment");
 
 const calculatePayments = (loan, payments) => {
   const { _id } = loan;
-
-  if (!Array.isArray(payments) || payments.length === 0) {
-    console.error("Invalid or empty payments array");
-    return [];
+  const scheduledRepayments = [];
+  for (let i = 0; i < payments.length; i++) {
+    const payment = new Payment({
+      loanId: _id,
+      amount: payments[i].amount,
+      totalAmount: payments[i].amount,
+      date: payments[i].date,
+      satus: "PENDING",
+    });
+    scheduledRepayments.push(payment);
   }
 
-  return payments.map((payment) => ({
-    loanId: _id,
-    amount: payment.amount,
-    totalAmount: payment.amount,
-    date: payment.date,
-    status: "PENDING",
-  }));
+  return scheduledRepayments;
 };
 
 exports.createLoan = async (req, res) => {

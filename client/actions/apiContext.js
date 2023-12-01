@@ -1,161 +1,113 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import AuthContext from "./authContext";
 
 const AuthState = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [admin, setAdmin] = useState(null);
-  const [email, setEmail] = useState("");
 
   const url = "http://localhost:8080/api";
 
-  const storeUser = (user) => {
-    if (typeof localStorage !== "undefined") {
-      localStorage.setItem("user", JSON.stringify(user));
+  const apiRequest = async (endpoint, method, data) => {
+    const token = getToken();
+    const headers = {
+      Authorization: `Bearer ${token}`,
+    };
+
+    const requestOptions = {
+      method,
+      headers,
+    };
+
+    if (data && (method === "POST" || method === "PUT")) {
+      requestOptions.headers["Content-Type"] = "application/json";
+      requestOptions.body = JSON.stringify(data);
     }
-  };
-  const storeAdmin = (user) => {
-    if (typeof localStorage !== "undefined") {
-      localStorage.setItem("admin", JSON.stringify(user));
+
+    const response = await fetch(`${url}/${endpoint}`, requestOptions);
+
+    const result = await response.json();
+
+    if (!result.success) {
+      console.log(result.message || "Server error");
+      return;
     }
+
+    return result;
   };
 
-  const removeUser = () => {
+  const storeUser = (userData) =>
+    localStorage.setItem("user", JSON.stringify(userData));
+
+  const storeToken = (token) => localStorage.setItem("token", token);
+
+  const getToken = () => localStorage.getItem("token");
+
+  const signUpAdmin = async (data) => apiRequest("user/signup", "POST", data);
+
+  const signInAdmin = async (data) => {
+    const result = await apiRequest("user/signin", "POST", data);
+    setUser(result.user);
+    storeToken(result.token);
+    storeAdmin(result.user);
+    return result;
+  };
+
+  const logOutUser = () => {
+    setUser(null);
     localStorage.removeItem("user");
   };
 
-  const SignUpAdmin = async (data) => {
-    const res = await fetch(`${url}/register`, {
-      method: "post",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    });
-    const result = await res.json();
-    setEmail(result?.email);
-    return result;
-  };
+  const signUpUser = async (data) => apiRequest("user/signup", "POST", data);
 
-  const loginAdmin = async (data) => {
-    const res = await fetch(`${url}/login`, {
-      method: "post",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    });
-    const result = await res.json();
+  const signInUser = async (data) => {
+    const result = await apiRequest("user/signin", "POST", data);
     setUser(result.user);
-    if (result.user) {
-      storeAdmin(result.user);
-    }
-    return result;
-  };
-
-  const logout = () => {
-    setUser(null);
-    removeUser();
-  };
-
-  const SignUpUser = async (data) => {
-    const res = await fetch(`${url}/register`, {
-      method: "post",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    });
-    const result = await res.json();
-    setEmail(result?.email);
-    return result;
-  };
-
-  const loginUser = async (data) => {
-    const res = await fetch(`${url}/login`, {
-      method: "post",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    });
-    const result = await res.json();
-    setUser(result.user);
+    storeToken(result.token);
     storeUser(result.user);
     return result;
   };
-  const createLoan = async (data) => {
-    const res = await fetch(`${url}/create`, {
-      method: "post",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    });
-    const result = await res.json();
-    return result;
-  };
-  const updateLoan = async (data) => {
-    const res = await fetch(`${url}/update`, {
-      method: "post",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    });
-    const result = await res.json();
-    return result;
-  };
-  const makeRepayment = async (data) => {
-    const res = await fetch(`${url}/make-repayment`, {
-      method: "post",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    });
-    const result = await res.json();
-    return result;
-  };
+
+  const storeAdmin = (userData) =>
+    localStorage.setItem("admin", JSON.stringify(userData));
+
+  const createLoan = async (data) =>
+    apiRequest("loan/createLoan", "POST", data);
+
+  const updateLoanState = async (data) =>
+    apiRequest("loan/update", "PUT", data);
+
+  const doPayment = async (data) => apiRequest("loan/doPayment", "POST", data);
 
   const getAllLoans = async () => {
-    const res = await fetch(`${url}/all-loans`, {
-      method: "Get",
-    });
-    const result = await res.json();
-    return result;
+    const result = await apiRequest("loan/allLoans", "get", null);
+    return result.loans;
   };
 
-  const getLoansByUserId = async (userId) => {
-    const res = await fetch(`${url}/loans/${userId}`, {
-      method: "Get",
-    });
-    const result = await res.json();
-    return result;
+  const getLoansById = async (userId) => {
+    const result = await apiRequest(`loan/loans/${userId}`, "get", null);
+    return result.loans;
   };
-  const getRepaymentsByLoanId = async (loanId) => {
-    const res = await fetch(`${url}/repayments/${loanId}`, {
-      method: "Get",
-    });
-    const result = await res.json();
-    return result;
+
+  const getPaymentsById = async (loanId) => {
+    const result = await apiRequest(`loan/payments/${loanId}`, "get", null);
+    return result.payments;
   };
 
   return (
     <AuthContext.Provider
       value={{
         user,
-        SignUpAdmin,
-        loginAdmin,
-        logout,
-        SignUpUser,
-        loginUser,
+        signUpAdmin,
+        signInAdmin,
+        logOutUser,
+        signUpUser,
+        signInUser,
         createLoan,
         getAllLoans,
-        updateLoan,
-        getLoansByUserId,
-        getRepaymentsByLoanId,
-        makeRepayment,
+        updateLoanState,
+        getLoansById,
+        getPaymentsById,
+        doPayment,
       }}
     >
       {children}
