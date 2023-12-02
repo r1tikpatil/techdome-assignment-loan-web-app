@@ -2,6 +2,7 @@ import { Toaster } from "react-hot-toast";
 
 import "./globals.css";
 import AuthState from "../actions/apis";
+import Navbar from "@/components/navBar";
 
 export const metadata = {
   title: "Loan App",
@@ -13,8 +14,11 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body>
         <main>
-          <Toaster position="top-right" />
-          <AuthState>{children}</AuthState>
+          <AuthState>
+            <Navbar />
+            <Toaster position="top-right" />
+            {children}
+          </AuthState>
         </main>
       </body>
     </html>

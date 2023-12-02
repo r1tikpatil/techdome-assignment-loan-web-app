@@ -111,7 +111,7 @@ const Page = () => {
   const handleReject = (loanId) => handleAction(loanId, "REJECT");
 
   return (
-    <div>
+    <div className="bg-gray-100 h-[100vh] p-4 pt-16">
       <LoanList
         loans={loans}
         handleAccept={handleAccept}

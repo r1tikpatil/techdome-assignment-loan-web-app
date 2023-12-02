@@ -50,6 +50,8 @@ const AuthState = ({ children }) => {
   const logOutUser = () => {
     setUser(null);
     localStorage.removeItem("user");
+    localStorage.removeItem("token");
+    localStorage.removeItem("admin");
   };
 
   const signUpUser = async (data) => apiRequest("user/signup", "POST", data);
