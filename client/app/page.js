@@ -4,7 +4,7 @@ import Link from "next/link";
 const Home = () => {
   return (
     <div>
-      <div className="bg-gradient-to-b from-blue-100 to-blue-300 h-[95vh] p-4 flex items-center justify-center">
+      <div className="bg-gradient-to-b from-blue-100 to-blue-300 h-[95vh]  p-4 flex items-center justify-center">
         <div className="max-w-md w-full bg-white p-8 rounded-lg shadow-lg">
           <h1 className="text-3xl font-semibold mb-4 text-center">
             Welcome to LoanApp
@@ -15,7 +15,7 @@ const Home = () => {
           <div className="flex justify-center">
             <Link
               href="/user/signin"
-              className="bg-blue-500 text-white px-4 py-2 rounded-full"
+              className="bg-pink-700 text-center text-white font-bold py-2 w-[20vw] px-4 rounded"
             >
               Apply for a Loan
             </Link>

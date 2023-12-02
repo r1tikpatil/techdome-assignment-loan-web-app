@@ -111,7 +111,7 @@ const LoanCalculator = () => {
         </div>
 
         <div className="p-4 border border-white pb-4 shadow-lg w-full lg:w-1/3 lg:h-[70%] rounded">
-          <h2 className="text-2xl mb-4 text-gray-800">Scheduled Repayments</h2>
+          <h2 className="text-2xl mb-4 text-gray-800">Scheduled Payments</h2>
           {showPayments ? (
             <div className="h-[85%] overflow-hidden overflow-y-auto">
               <ul>
@@ -128,7 +128,7 @@ const LoanCalculator = () => {
               </ul>
             </div>
           ) : (
-            <p>No repayments scheduled yet.</p>
+            <p>No payments scheduled yet.</p>
           )}
         </div>
       </div>

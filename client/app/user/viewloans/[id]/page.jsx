@@ -15,7 +15,7 @@ const formatDate = (dateString) => {
   return `${dd}/${mm}/${yy}`;
 };
 
-const RepaymentRow = ({ repayment }) => (
+const PaymentRow = ({ repayment }) => (
   <tr>
     <td className="border border-white  px-4 py-2 text-center">
       {repayment.totalAmount}
@@ -113,9 +113,9 @@ const Page = ({ params }) => {
   };
 
   return (
-    <div className="bg-gradient-to-b from-blue-100 h-[100vh] to-blue-300 p-4 w-screen pt-16">
-      <h1 className="text-center font-bold text-xl">Balance Sheet</h1>
-      <div className="w-full flex justify-center">
+    <div className="bg-gradient-to-b from-blue-100 h-[100vh] to-blue-300 p-4 w-screen pt-20">
+      <h1 className="text-center font-semibold text-2xl">Balance Sheet</h1>
+      <div className="w-full flex justify-center mt-8">
         <table className="mt-4 w-2/3 border-white border-2 shadow  p-16">
           <thead>
             <tr>
@@ -127,21 +127,21 @@ const Page = ({ params }) => {
           </thead>
           <tbody>
             {repayments.map((repayment, index) => (
-              <RepaymentRow key={index} repayment={repayment} />
+              <PaymentRow key={index} repayment={repayment} />
             ))}
           </tbody>
         </table>
       </div>
-      <h1 className="text-center text-xlb my-4">
+      <h1 className="text-center text-xl my-8">
         Remaining Amount: ₹{remainingBalance.toFixed(2)}
       </h1>
       {hasPendingRepayments && (
-        <div className="text-center">
+        <div className="text-center mt-8">
           <button
-            className="bg-pink-500 hover:scale-105 transition ease-in-out transform-slow hover:bg-pink-700 text-center text-white font-bold py-2 px-4 rounded shadow"
+            className="bg-pink-500 hover:scale-105 transition ease-in-out transform-slow hover:bg-pink-700 text-center text-white font-bold py-2 w-[10vw] px-4 rounded shadow"
             onClick={openModal}
           >
-            Repay
+            Pay
           </button>
         </div>
       )}

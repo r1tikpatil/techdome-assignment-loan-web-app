@@ -3,7 +3,7 @@ const Payment = require("../models/payment");
 
 const calculatePayments = (loan, payments) => {
   const { _id } = loan;
-  const scheduledRepayments = [];
+  const scheduledPayments = [];
   for (let i = 0; i < payments.length; i++) {
     const payment = new Payment({
       loanId: _id,
@@ -12,10 +12,10 @@ const calculatePayments = (loan, payments) => {
       date: payments[i].date,
       satus: "PENDING",
     });
-    scheduledRepayments.push(payment);
+    scheduledPayments.push(payment);
   }
 
-  return scheduledRepayments;
+  return scheduledPayments;
 };
 
 exports.createLoan = async (req, res) => {
@@ -32,9 +32,9 @@ exports.createLoan = async (req, res) => {
 
     const loan = await Loan.create({ userId, amount, term });
 
-    const scheduledRepayments = calculatePayments(loan, payments);
+    const scheduledPayments = calculatePayments(loan, payments);
 
-    await Payment.insertMany(scheduledRepayments);
+    await Payment.insertMany(scheduledPayments);
 
     return res.status(200).json({
       success: true,
@@ -133,22 +133,22 @@ exports.doPayment = async (req, res) => {
 
     let remainingAmount = amount;
 
-    for (const repayment of pendingPayments) {
+    for (const payment of pendingPayments) {
       if (remainingAmount <= 0) break;
 
-      const paidAmount = Math.min(repayment.amount, remainingAmount);
+      const paidAmount = Math.min(payment.amount, remainingAmount);
       remainingAmount -= paidAmount;
 
-      repayment.amount -= paidAmount;
-      if (repayment.amount === 0) {
-        repayment.status = "PAID";
+      payment.amount -= paidAmount;
+      if (payment.amount === 0) {
+        payment.status = "PAID";
       }
 
-      await repayment.save();
+      await payment.save();
     }
 
     const allPaymentsPaid = pendingPayments.every(
-      (repayment) => repayment.status === "PAID"
+      (payment) => payment.status === "PAID"
     );
 
     if (allPaymentsPaid) {
@@ -158,7 +158,7 @@ exports.doPayment = async (req, res) => {
 
     return res.status(200).json({
       success: true,
-      message: "Repayment successful.",
+      message: "Payment successful!",
     });
   } catch (error) {
     return res.status(500).json({
