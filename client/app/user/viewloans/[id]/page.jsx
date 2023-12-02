@@ -45,14 +45,6 @@ const Page = ({ params }) => {
   const [remainingBalance, setRemainingBalance] = useState(0);
 
   const router = useRouter();
-  if (!user) {
-    router.push("/user/signin");
-    return;
-  } else if (user.isAdmin === true) {
-    logOutUser();
-    router.push("/user/signin");
-    return;
-  }
 
   const fetchRepayments = async () => {
     try {
