@@ -5,7 +5,8 @@ import GlobalContext from "./context";
 const AuthState = ({ children }) => {
   const [user, setUser] = useState(null);
 
-  const url = "http://localhost:8080/api";
+  const url = "https://gifted-leggings-calf.cyclic.app/api";
+  // const url = "http://localhost:8080/api";
 
   const apiRequest = async (endpoint, method, data) => {
     const token = getToken();
