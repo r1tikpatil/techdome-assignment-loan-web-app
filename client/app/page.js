@@ -1,7 +1,10 @@
 "use client";
 import Link from "next/link";
+import React, { useContext } from "react";
+import GlobalContext from "@/actions/context";
 
 const Home = () => {
+  const { user } = useContext(GlobalContext);
   return (
     <div>
       <div className="bg-gradient-to-b from-blue-100 to-blue-300 h-[95vh]  p-4 flex items-center justify-center">
@@ -14,10 +17,18 @@ const Home = () => {
           </p>
           <div className="flex justify-center">
             <Link
-              href="/user/signin"
-              className="bg-pink-700 text-center text-white font-bold py-2 w-[20vw] px-4 rounded"
+              href={
+                user
+                  ? user.isAdmin
+                    ? "/admin/requests"
+                    : "/user/createloan"
+                  : "/user/signin"
+              }
+              className="bg-pink-700 text-center text-white font-bold py-2 w-[80vw] lg:w-[20vw] px-4 rounded"
             >
-              Apply for a Loan
+              {user && user.isAdmin
+                ? "Check Loan Requests"
+                : "Apply for a Loan"}
             </Link>
           </div>
         </div>

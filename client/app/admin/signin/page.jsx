@@ -13,12 +13,18 @@ import {
 const SignIn = () => {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
-  const { signInAdmin } = useContext(GlobalContext);
+  const { user, logOutUser, signInAdmin } = useContext(GlobalContext);
   const [values, setValues] = useState({
     email: "",
     password: "",
     isAdmin: true,
   });
+
+  if (user && user.isAdmin !== true) {
+    logOutUser();
+    router.push("/");
+    return;
+  }
 
   const handleLogin = async () => {
     try {

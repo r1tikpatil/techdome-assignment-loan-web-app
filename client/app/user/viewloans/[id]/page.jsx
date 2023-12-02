@@ -1,11 +1,11 @@
 "use client";
-import React, { useState, useEffect, useContext, useRef } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import GlobalContext from "@/actions/context";
-import Link from "next/link";
 import {
   successMessageToast,
   errorMessageToast,
 } from "@/actions/toastMessages";
+import { useRouter } from "next/navigation";
 
 const formatDate = (dateString) => {
   const date = new Date(dateString);
@@ -38,11 +38,21 @@ const PaymentRow = ({ repayment }) => (
 
 const Page = ({ params }) => {
   const [repayments, setRepayments] = useState([]);
-  const { getPaymentsById, doPayment } = useContext(GlobalContext);
+  const { user, logOutUser, getPaymentsById, doPayment } =
+    useContext(GlobalContext);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [paymentAmount, setPaymentAmount] = useState("");
   const [remainingBalance, setRemainingBalance] = useState(0);
-  const modalRef = useRef(null);
+
+  const router = useRouter();
+  if (!user) {
+    router.push("/user/signin");
+    return;
+  } else if (user.isAdmin === true) {
+    logOutUser();
+    router.push("/user/signin");
+    return;
+  }
 
   const fetchRepayments = async () => {
     try {

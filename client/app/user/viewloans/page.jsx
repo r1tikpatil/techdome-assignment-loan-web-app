@@ -2,16 +2,27 @@
 import React, { useState, useEffect, useContext } from "react";
 import GlobalContext from "@/actions/context";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 const page = () => {
   const [loans, setLoans] = useState([]);
-  const { getLoansById } = useContext(GlobalContext);
+  const router = useRouter();
+  const { user, logOutUser, getLoansById } = useContext(GlobalContext);
 
-  let user;
-
-  if (typeof localStorage !== "undefined") {
-    user = JSON.parse(localStorage.getItem("user"));
+  if (!user) {
+    router.push("/user/signin");
+    return;
+  } else if (user.isAdmin === true) {
+    logOutUser();
+    router.push("/user/signin");
+    return;
   }
+
+  // let user;
+
+  // if (typeof localStorage !== "undefined") {
+  //   user = JSON.parse(localStorage.getItem("user"));
+  // }
 
   const getLoans = async () => {
     const res = await getLoansById(user._id);

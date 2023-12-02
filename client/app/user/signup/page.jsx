@@ -21,7 +21,13 @@ const SignUp = () => {
     isAdmin: false,
   });
 
-  const { signUpUser } = useContext(GlobalContext);
+  const { user, logOutUser, signUpUser } = useContext(GlobalContext);
+
+  if (user && user.isAdmin === true) {
+    logOutUser();
+    router.push("/");
+    return;
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault();

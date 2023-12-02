@@ -5,6 +5,7 @@ import {
   successMessageToast,
   errorMessageToast,
 } from "@/actions/toastMessages";
+import { useRouter } from "next/navigation";
 
 const LoanItem = ({ loan, handleAccept, handleReject }) => (
   <li
@@ -88,8 +89,20 @@ const LoanList = ({ loans, handleAccept, handleReject }) => {
 };
 
 const Page = () => {
+  const { user, logOutUser, getAllLoans, updateLoanState } =
+    useContext(GlobalContext);
+
+  const router = useRouter();
+  if (!user) {
+    router.push("/admin/signin");
+    return;
+  } else if (user.isAdmin !== true) {
+    logOutUser();
+    router.push("/");
+    return;
+  }
+
   const [loans, setLoans] = useState([]);
-  const { getAllLoans, updateLoanState } = useContext(GlobalContext);
 
   const getLoans = async () => {
     try {

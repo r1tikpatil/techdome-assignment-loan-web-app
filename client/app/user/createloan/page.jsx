@@ -13,8 +13,17 @@ const LoanCalculator = () => {
   const [term, setTerm] = useState("");
   const [installments, setInstallments] = useState([]);
   const [showPayments, setShowPayments] = useState(false);
-  const { createLoan, user } = useContext(GlobalContext);
+  const { createLoan, user, logOutUser } = useContext(GlobalContext);
   const router = useRouter();
+
+  if (!user) {
+    router.push("/user/signin");
+    return;
+  } else if (user.isAdmin === true) {
+    logOutUser();
+    router.push("/user/signin");
+    return;
+  }
 
   const handleApply = async () => {
     try {

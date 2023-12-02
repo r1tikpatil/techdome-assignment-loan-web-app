@@ -1,10 +1,14 @@
+"use client";
+import React, { useContext } from "react";
+import GlobalContext from "@/actions/context";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 
 export const Button = ({ href, label, colors }) => {
   return (
     <Link legacyBehavior href={href}>
       <a
-        className={`text-center text-lg px-4 mr-8 h-10 w-40 py-2 mb-4 rounded-md shadow-md flex items-center justify-center ${colors}`}
+        className={`text-center text-lg px-4 mr-4 lg:mr-8 h-10 w-40 py-2 mb-4 rounded-md shadow-md flex items-center justify-center ${colors}`}
       >
         {label}
       </a>
@@ -13,6 +17,16 @@ export const Button = ({ href, label, colors }) => {
 };
 
 const CenteredLinks = () => {
+  const { user, logOutUser } = useContext(GlobalContext);
+  const router = useRouter();
+  if (!user) {
+    router.push("/user/signin");
+    return;
+  } else if (user.isAdmin === true) {
+    logOutUser();
+    router.push("/user/signin");
+    return;
+  }
   return (
     <div className="bg-gradient-to-b from-blue-100 to-blue-300 flex items-center justify-center min-h-screen">
       <Button
