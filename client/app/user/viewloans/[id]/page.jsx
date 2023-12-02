@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect, useContext, useRef } from "react";
-import AuthContext from "@/actions/context";
+import GlobalContext from "@/actions/context";
 import Link from "next/link";
 import {
   successMessageToast,
@@ -40,7 +40,7 @@ const modalStyles = {
 
 const Page = ({ params }) => {
   const [repayments, setRepayments] = useState([]);
-  const { getPaymentsById, doPayment } = useContext(AuthContext);
+  const { getPaymentsById, doPayment } = useContext(GlobalContext);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [paymentAmount, setPaymentAmount] = useState("");

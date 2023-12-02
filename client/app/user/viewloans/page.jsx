@@ -1,11 +1,11 @@
 "use client";
 import React, { useState, useEffect, useContext } from "react";
-import AuthContext from "@/actions/context";
+import GlobalContext from "@/actions/context";
 import Link from "next/link";
 
 const page = () => {
   const [loans, setLoans] = useState([]);
-  const { getLoansById } = useContext(AuthContext);
+  const { getLoansById } = useContext(GlobalContext);
 
   let user;
 

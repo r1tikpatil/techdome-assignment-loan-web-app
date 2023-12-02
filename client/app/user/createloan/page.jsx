@@ -1,6 +1,6 @@
 "use client";
 import { useState, useContext } from "react";
-import AuthContext from "@/actions/context";
+import GlobalContext from "@/actions/context";
 import Loader from "@/components/Loader";
 import { useRouter } from "next/navigation";
 
@@ -14,7 +14,7 @@ const LoanCalculator = () => {
   const [term, setTerm] = useState("");
   const [installments, setInstallments] = useState([]);
   const [showPayments, setShowPayments] = useState(false);
-  const { createLoan, user } = useContext(AuthContext);
+  const { createLoan, user } = useContext(GlobalContext);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 

@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import AuthContext from "./context";
+import GlobalContext from "./context";
 
 const AuthState = ({ children }) => {
   const [user, setUser] = useState(null);
@@ -89,7 +89,7 @@ const AuthState = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider
+    <GlobalContext.Provider
       value={{
         user,
         signUpAdmin,
@@ -106,7 +106,7 @@ const AuthState = ({ children }) => {
       }}
     >
       {children}
-    </AuthContext.Provider>
+    </GlobalContext.Provider>
   );
 };
 

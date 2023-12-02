@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useContext } from "react";
-import AuthContext from "@/actions/context";
+import GlobalContext from "@/actions/context";
 import { useRouter } from "next/navigation";
 import SignUpPage from "@/components/Signup";
 import Loader from "@/components/Loader";
@@ -21,7 +21,7 @@ const SignUp = () => {
     isAdmin: false,
   });
 
-  const { signUpUser } = useContext(AuthContext);
+  const { signUpUser } = useContext(GlobalContext);
 
   const handleSubmit = async (e) => {
     e.preventDefault();

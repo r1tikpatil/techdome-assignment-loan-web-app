@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect, useContext } from "react";
-import AuthContext from "@/actions/context";
+import GlobalContext from "@/actions/context";
 import { useRouter } from "next/navigation";
 import SignInPage from "../../../components/Signin";
 import Loader from "@/components/Loader";
@@ -13,7 +13,7 @@ import {
 const SignIn = () => {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
-  const { signInAdmin } = useContext(AuthContext);
+  const { signInAdmin } = useContext(GlobalContext);
   const [values, setValues] = useState({
     email: "",
     password: "",

@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect, useContext } from "react";
-import AuthContext from "@/actions/context";
+import GlobalContext from "@/actions/context";
 import {
   successMessageToast,
   errorMessageToast,
@@ -78,7 +78,7 @@ const LoanList = ({ loans, handleAccept, handleReject }) => {
 
 const Page = () => {
   const [loans, setLoans] = useState([]);
-  const { getAllLoans, updateLoanState } = useContext(AuthContext);
+  const { getAllLoans, updateLoanState } = useContext(GlobalContext);
 
   const getLoans = async () => {
     try {
