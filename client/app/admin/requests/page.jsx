@@ -9,42 +9,47 @@ import {
 const LoanItem = ({ loan, handleAccept, handleReject }) => (
   <li
     key={loan._id}
-    className="bg-white rounded p-4 shadow-md mb-4 flex items-center justify-between sm:m-5"
+    className="bg-gradient-to-b from-blue-100 to-blue-300 rounded-md p-4 shadow-md mb-4 flex items-center justify-between sm:m-5"
   >
-    <div>
+    <div className="text-gray-700">
       <p>
-        <strong>Username:</strong> {loan.userId.name}
+        <span>User:</span> {loan.userId.name}
       </p>
       <p>
-        <strong>Email:</strong> {loan.userId.email}
+        <span>Email:</span> {loan.userId.email}
       </p>
       <p>
-        <strong>Amount:</strong> ₹{loan.amount}
+        <span>Loan Amount:</span> ₹{loan.amount}
       </p>
       <p>
-        <strong>Term:</strong> {loan.term} weeks
+        <span>Term:</span> {loan.term} weeks
       </p>
     </div>
-    <div>
+
+    <div className="flex items-center">
       {loan.state === "PENDING" && (
         <>
           <button
-            className="bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600 mr-2"
+            className="bg-green-500 text-white px-3 py-2 rounded-md hover:bg-green-600 mr-2"
             onClick={() => handleAccept(loan._id, "APPROVED")}
           >
             Accept
           </button>
           <button
-            className="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600"
+            className="bg-red-500 text-white px-3 py-2 rounded-md hover:bg-red-600"
             onClick={() => handleReject(loan._id, "REJECT")}
           >
             Reject
           </button>
         </>
       )}
-      {loan.state === "APPROVED" && <p className="text-green-500">Approved</p>}
-      {loan.state === "PAID" && <p className="text-blue-500">Paid</p>}
-      {loan.state === "REJECT" && <p className="text-red-500">Rejected</p>}
+      {loan.state === "APPROVED" && (
+        <p className="text-green-500 font-bold">Approved</p>
+      )}
+      {loan.state === "PAID" && <p className="text-blue-500 font-bold">Paid</p>}
+      {loan.state === "REJECT" && (
+        <p className="text-red-500 font-bold">Rejected</p>
+      )}
     </div>
   </li>
 );
@@ -52,26 +57,32 @@ const LoanItem = ({ loan, handleAccept, handleReject }) => (
 const LoanList = ({ loans, handleAccept, handleReject }) => {
   if (loans.length === 0) {
     return (
-      <div className="mt-4 text-center bg-gray-50">
-        <h2 className="text-2xl mb-4 font-bold text-gray-800">Loan Status</h2>
+      <div className="mt-4 text-center ">
+        <h2 className="text-2xl mb-4 font-semibold text-gray-800">
+          Loan Status
+        </h2>
         <p className="text-gray-600">No loan requests at the moment.</p>
       </div>
     );
   }
 
   return (
-    <div className="mt-4 flex flex-col items-center bg-gray-50">
-      <h2 className="text-2xl mb-2 text-center">Loan Status</h2>
-      <ul className="w-2/3 md:w-1/2 lg:w-1/3">
-        {loans.map((loan) => (
-          <LoanItem
-            key={loan._id}
-            loan={loan}
-            handleAccept={handleAccept}
-            handleReject={handleReject}
-          />
-        ))}
-      </ul>
+    <div className="mt-4 flex flex-col h-full items-center">
+      <h2 className="text-2xl font-semibold h-[8%] mb-2 text-center">
+        Loan Status
+      </h2>
+      <div className="overflow-y-auto overflow-hidden h-[87%] w-2/3 md:w-1/2 lg:w-1/3">
+        <ul className="w-full ">
+          {loans.map((loan) => (
+            <LoanItem
+              key={loan._id}
+              loan={loan}
+              handleAccept={handleAccept}
+              handleReject={handleReject}
+            />
+          ))}
+        </ul>
+      </div>
     </div>
   );
 };
@@ -111,7 +122,7 @@ const Page = () => {
   const handleReject = (loanId) => handleAction(loanId, "REJECT");
 
   return (
-    <div className="bg-gray-100 h-[100vh] p-4 pt-16">
+    <div className="bg-gradient-to-b from-blue-100 to-blue-300  h-[100vh] p-4 pt-16">
       <LoanList
         loans={loans}
         handleAccept={handleAccept}

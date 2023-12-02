@@ -1,7 +1,6 @@
 "use client";
 import { useState, useContext } from "react";
 import GlobalContext from "@/actions/context";
-import Loader from "@/components/Loader";
 import { useRouter } from "next/navigation";
 
 import {
@@ -15,12 +14,10 @@ const LoanCalculator = () => {
   const [installments, setInstallments] = useState([]);
   const [showPayments, setShowPayments] = useState(false);
   const { createLoan, user } = useContext(GlobalContext);
-  const [loading, setLoading] = useState(false);
   const router = useRouter();
 
   const handleApply = async () => {
     try {
-      setLoading(true);
       const response = await createLoan({
         amount: loanAmount,
         term,
@@ -30,13 +27,15 @@ const LoanCalculator = () => {
 
       if (response.success) {
         successMessageToast(response.message);
+        setShowPayments(false);
+        setInstallments([]);
+        setTerm("");
+        setLoanAmount("");
         setTimeout(() => {
           router.push("/user/dashboard");
-          setLoading(false);
         }, 2000);
       } else {
         errorMessageToast(response.message);
-        setLoading(false);
       }
     } catch (err) {
       console.log(err);
@@ -77,47 +76,50 @@ const LoanCalculator = () => {
     return `${day}/${month}/${year}`;
   };
 
-  if (loading) {
-    return <Loader color="rgba(0,0,0,0.6)" />;
-  }
-
   return (
-    <div className="h-screen ">
-      <div className="flex items-center justify-center flex-col lg:flex-row  mt-8  h-3/4 ">
-        <div className="border p-4  shadow-md items-center flex flex-col mx-8  md:h-full  md:w-2/5 lg:w-1/4 lg:h-4/5 rounded-full m-8 justify-center ">
+    <div className="bg-gradient-to-b from-blue-100 to-blue-300 h-[100vh] ">
+      <div className="flex flex-col lg:flex-row items-center justify-center pt-8 h-[80%]">
+        <div className="border p-4 shadow-md border-white flex flex-col mx-8 md:h-full md:w-2/5 lg:w-1/4 lg:h-[70%] rounded-md m-8 justify-center items-center">
           <div className="mb-4">
-            <label className="block mb-2 text-center">Loan Amount</label>
+            <label className="block mb-2 text-center text-gray-800">
+              Loan Amount
+            </label>
             <input
               type="number"
-              className="border rounded px-2 py-1"
+              className="border rounded px-4 py-2 focus:outline-none focus:border-pink-500"
               value={loanAmount}
               onChange={(e) => setLoanAmount(e.target.value)}
             />
           </div>
           <div className="mb-4">
-            <label className="block mb-2 text-center">Term (in weeks)</label>
+            <label className="block mb-2 text-center text-gray-800">
+              Term (in weeks)
+            </label>
             <input
               type="number"
-              className="border rounded px-2 py-1"
+              className="border rounded px-4 py-2 focus:outline-none focus:border-pink-500"
               value={term}
               onChange={(e) => setTerm(e.target.value)}
             />
           </div>
           <button
-            className="bg-pink-500 text-white px-4 py-2 rounded hover:bg-pink-600"
+            className="bg-pink-500 text-white px-6 py-3 rounded hover:bg-pink-600 focus:outline-none"
             onClick={calculateInstallments}
           >
             Schedule
           </button>
         </div>
 
-        <div className=" p-4 border shadow-lg w-2/3 lg:w-1/3">
-          <h2 className="text-2xl mb-4 ">Scheduled Repayments</h2>
+        <div className="p-4 border border-white pb-4 shadow-lg w-full lg:w-1/3 lg:h-[70%] rounded">
+          <h2 className="text-2xl mb-4 text-gray-800">Scheduled Repayments</h2>
           {showPayments ? (
-            <div className="h-[300px] text-center overflow-y-auto">
+            <div className="h-[85%] overflow-hidden overflow-y-auto">
               <ul>
                 {installments.map((installment, index) => (
-                  <li key={index} className="border p-2 mb-2 rounded shadow-md">
+                  <li
+                    key={index}
+                    className="border border-white  p-3 mb-2 rounded shadow-md"
+                  >
                     {`Week ${index + 1}: ${formatDate(installment.date)} - ₹${
                       installment.amount
                     }`}
@@ -126,16 +128,18 @@ const LoanCalculator = () => {
               </ul>
             </div>
           ) : (
-            <p></p>
+            <p>No repayments scheduled yet.</p>
           )}
         </div>
       </div>
-      <button
-        onClick={handleApply}
-        className="cursor-pointer hover:scale-110 w-40 h-10 mx-auto bg-pink-500 flex items-center justify-center text-white my-12 mb-12"
-      >
-        Apply
-      </button>
+      <div className="flex flex-col lg:flex-row items-center justify-center h-[10%]">
+        <button
+          onClick={handleApply}
+          className="cursor-pointer hover:scale-110 w-40 h-10 mx-auto bg-pink-500 flex items-center justify-center text-white my-12 mb-12 rounded-full focus:outline-none"
+        >
+          Apply
+        </button>
+      </div>
     </div>
   );
 };

@@ -7,7 +7,7 @@ import {
   errorMessageToast,
 } from "@/actions/toastMessages";
 
-const formateDate = (dateString) => {
+const formatDate = (dateString) => {
   const date = new Date(dateString);
   const dd = String(date.getDate()).padStart(2, "0");
   const mm = String(date.getMonth() + 1).padStart(2, "0");
@@ -17,13 +17,17 @@ const formateDate = (dateString) => {
 
 const RepaymentRow = ({ repayment }) => (
   <tr>
-    <td className="border px-4 py-2 text-center">{repayment.totalAmount}</td>
-    <td className="border px-4 py-2 text-center">{repayment.amount}</td>
-    <td className="border px-4 py-2 text-center">
-      {formateDate(repayment.date)}
+    <td className="border border-white  px-4 py-2 text-center">
+      {repayment.totalAmount}
+    </td>
+    <td className="border border-white  px-4 py-2 text-center">
+      {repayment.amount}
+    </td>
+    <td className="border border-white  px-4 py-2 text-center">
+      {formatDate(repayment.date)}
     </td>
     <td
-      className={`border px-4 py-2 text-center ${
+      className={`border border-white  px-4 py-2 text-center ${
         repayment.status === "PENDING" ? "text-red-500" : "text-green-500"
       }`}
     >
@@ -32,37 +36,26 @@ const RepaymentRow = ({ repayment }) => (
   </tr>
 );
 
-const modalStyles = {
-  bg: "absolute inset-0 bg-black opacity-50",
-  content:
-    "relative flex flex-col justify-center items-center bg-white p-4 shadow-lg h-80 w-80 rounded-full",
-};
-
 const Page = ({ params }) => {
   const [repayments, setRepayments] = useState([]);
   const { getPaymentsById, doPayment } = useContext(GlobalContext);
-
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [paymentAmount, setPaymentAmount] = useState("");
   const [remainingBalance, setRemainingBalance] = useState(0);
   const modalRef = useRef(null);
 
-  async function fetchRepayments() {
+  const fetchRepayments = async () => {
     try {
       const res = await getPaymentsById(params.id);
       setRepayments(res);
     } catch (error) {
       console.error("Error fetching repayments:", error);
     }
-  }
+  };
 
   useEffect(() => {
     fetchRepayments();
   }, [params.id]);
-
-  const hasPendingRepayments = repayments.some(
-    (repayment) => repayment.status === "PENDING"
-  );
 
   useEffect(() => {
     const pendingRepaymentAmounts = repayments
@@ -75,6 +68,10 @@ const Page = ({ params }) => {
     );
     setRemainingBalance(balance);
   }, [repayments]);
+
+  const hasPendingRepayments = repayments.some(
+    (repayment) => repayment.status === "PENDING"
+  );
 
   const openModal = () => {
     if (hasPendingRepayments) {
@@ -98,11 +95,13 @@ const Page = ({ params }) => {
           amount: paymentAmount,
           loanId: params.id,
         });
+
         if (res.success) {
           successMessageToast(res.message);
         } else {
           errorMessageToast(res.message);
         }
+
         fetchRepayments();
         closeModal();
       } catch (error) {
@@ -114,22 +113,16 @@ const Page = ({ params }) => {
   };
 
   return (
-    <div className="p-4 w-screen mt-12">
-      <Link
-        className="font-bold text-xl text-pink-300"
-        href={"/user/dashboard"}
-      >
-        LOAN-APP
-      </Link>
+    <div className="bg-gradient-to-b from-blue-100 h-[100vh] to-blue-300 p-4 w-screen pt-16">
       <h1 className="text-center font-bold text-xl">Balance Sheet</h1>
       <div className="w-full flex justify-center">
-        <table className="mt-4 w-2/3 border-collapse border-2 shadow bg-gray-100 p-16">
+        <table className="mt-4 w-2/3 border-white border-2 shadow  p-16">
           <thead>
             <tr>
-              <th className="border px-4 py-2">Amount</th>
-              <th className="border px-4 py-2">To Pay</th>
-              <th className="border px-4 py-2">Deadline</th>
-              <th className="border px-4 py-2">Status</th>
+              <th className="border border-white px-4 py-2">Amount</th>
+              <th className="border border-white  px-4 py-2">To Pay</th>
+              <th className="border border-white  px-4 py-2">Deadline</th>
+              <th className="border border-white  px-4 py-2">Status</th>
             </tr>
           </thead>
           <tbody>
@@ -139,7 +132,7 @@ const Page = ({ params }) => {
           </tbody>
         </table>
       </div>
-      <h1 className="text-center my-4">
+      <h1 className="text-center text-xlb my-4">
         Remaining Amount: ₹{remainingBalance.toFixed(2)}
       </h1>
       {hasPendingRepayments && (
@@ -155,32 +148,32 @@ const Page = ({ params }) => {
 
       {isModalOpen && (
         <div className="fixed inset-0 flex items-center justify-center z-50 ">
-          <div className={modalStyles.bg}></div>
+          <div className="absolute inset-0 bg-black opacity-50"></div>
 
-          <div className={modalStyles.content} ref={modalRef}>
-            <h2 className="text-lg font-bold mb-4 text-center">
+          <div className="relative flex flex-col justify-center items-center h-80  bg-white p-8 w-96 rounded-md z-100 shadow-md">
+            <h2 className="text-xl font-bold mb-4 text-center">
               Make Repayment
             </h2>
-            <label className="block mb-2 text-center">
+            <label className="block mb-4">
               Repayment Amount
               <input
                 type="number"
-                className="border rounded py-2 px-3 w-full"
+                className="border rounded py-2 px-3 w-full focus:outline-none focus:border-pink-500"
                 value={paymentAmount}
                 onChange={(e) => setPaymentAmount(e.target.value)}
               />
             </label>
             <button
-              className="bg-pink-500 hover:bg-pink-700 w-max text-white font-bold py-2 px-4 rounded shadow mt-2"
+              className="bg-pink-500 hover:bg-pink-700 w-full text-white font-bold py-2 px-4 rounded shadow mt-4"
               onClick={handlePaymentSubmit}
             >
               Do Repay
             </button>
             <span
-              className="modal-close absolute bottom-0 mb-8 cursor-pointer"
+              className="block text-center text-gray-500 cursor-pointer mt-4"
               onClick={closeModal}
             >
-              &times; close
+              Cancel
             </span>
           </div>
         </div>
