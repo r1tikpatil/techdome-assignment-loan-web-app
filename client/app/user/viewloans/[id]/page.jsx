@@ -38,13 +38,10 @@ const PaymentRow = ({ repayment }) => (
 
 const Page = ({ params }) => {
   const [repayments, setRepayments] = useState([]);
-  const { user, logOutUser, getPaymentsById, doPayment } =
-    useContext(GlobalContext);
+  const { getPaymentsById, doPayment } = useContext(GlobalContext);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [paymentAmount, setPaymentAmount] = useState("");
   const [remainingBalance, setRemainingBalance] = useState(0);
-
-  const router = useRouter();
 
   const fetchRepayments = async () => {
     try {

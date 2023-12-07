@@ -18,11 +18,6 @@ const page = () => {
     return;
   }
 
-  // let user;
-
-  // if (typeof localStorage !== "undefined") {
-  //   user = JSON.parse(localStorage.getItem("user"));
-  // }
 
   const getLoans = async () => {
     const res = await getLoansById(user._id);
